@@ -13,3 +13,4 @@ class Project(info: ProjectInfo) extends DefaultProject(info) {
   // testing
   lazy val uf_spec = "net.databinder" %% "unfiltered-spec" % uf_version % "test"
 }
+
