@@ -39,20 +39,14 @@ class App extends unfiltered.Plan {
 object Server {
   def main(args: Array[String]) {
     import scala.actors.Actor._
-    import java.net.ServerSocket
-    import xsbt.IPC
     actor {
-      val ss = new ServerSocket(32345)
-      println("about to block")
-      val socket = ss.accept()
-      println("writing")
-      val os = socket.getOutputStream
-      os.write("compile\n".getBytes)
-      os.close()
-      println("closing")
-      socket.close()
-      println("closed")
-      ss.close()
+      xsbt.IPC.server(32345) { ipc =>
+        println("sending")
+        ipc.send("compile")
+        //println(ipc.receive)
+        ipc.send("exit")
+        None//Some("okay")
+      }
     }
     unfiltered.server.Http(8080).filter(new App).run
   }
