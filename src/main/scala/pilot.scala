@@ -5,17 +5,22 @@ import unfiltered.response._
 import unfiltered.server.Http
 
 class Processor extends sbt.processor.BasicProcessor {
-  def apply(project: sbt.Project, args: String) {
-    project match {
-      case p: sbt.BasicScalaProject =>
-        val server = Http(8080)
-        server.filter(new Pilot(p,server)).run
-      case _ => project.log.error("Can only pilot a BasicScalaProject")
+  val port = 8080
+  def apply(p: sbt.Project, s: String) = {
+    (p) match {
+      case (p: sbt.BasicScalaProject) =>
+        val s = Http(port);
+        p.log.info("Starting pilot at http://127.0.0.1:8080/")
+        s.filter(new Pilot(p,s)).run()
+        p.log.info("Finished pilot")
+      case _ =>
+        p.log.error("Can only pilot a BasicScalaProject")
     }
   }
 }
 
 class Pilot(p: sbt.BasicScalaProject, server: Http) extends unfiltered.Plan {
+  import dispatch.futures.DefaultFuture._
   abstract class Button(val name: String) extends (() => Unit) {
     val html = <input type="submit" name="action" value={name} />
   }
@@ -29,11 +34,7 @@ class Pilot(p: sbt.BasicScalaProject, server: Http) extends unfiltered.Plan {
     def apply() { p.clean.run }
   }
   object Exit extends Button("Exit") {
-    def apply() { 
-      try { server.stop() } catch {
-        case exc: InterruptedException => ()
-      }
-    }
+    def apply() { future { server.stop() } }
   }
   val buttons = (Map.empty[String, Button] /: (
     Compile :: Run :: Clean :: Exit :: Nil

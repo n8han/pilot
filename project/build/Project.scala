@@ -5,6 +5,8 @@ class Project(info: ProjectInfo) extends ProcessorProject(info) {
   
   // unfiltered
   lazy val uf = "net.databinder" %% "unfiltered-server" % uf_version
+  
+  lazy val df = "net.databinder" %% "dispatch-futures" % "0.7.5"
 
   val databinder_repo = Resolver.url("Databinder Repository") artifacts
     "http://databinder.net/repo/[organization]/[module]/[revision]/[type]s/[artifact](-[classifier]).[ext]"
