@@ -1,15 +1,12 @@
 import sbt._
 
 class Project(info: ProjectInfo) extends ProcessorProject(info) {
-  val uf_version = "0.1.4"
+  val uf_version = "0.1.5-SNAPSHOT"
   
   // unfiltered
   lazy val uf = "net.databinder" %% "unfiltered-server" % uf_version
   
   lazy val df = "net.databinder" %% "dispatch-futures" % "0.7.5"
-
-  val databinder_repo = Resolver.url("Databinder Repository") artifacts
-    "http://databinder.net/repo/[organization]/[module]/[revision]/[type]s/[artifact](-[classifier]).[ext]"
 
   // testing
   lazy val uf_spec = "net.databinder" %% "unfiltered-spec" % uf_version % "test"

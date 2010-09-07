@@ -10,18 +10,17 @@ class Processor extends sbt.processor.BasicProcessor {
     (p) match {
       case (p: sbt.BasicScalaProject) =>
         val s = Http(port);
-        s.filter(new Pilot(p,s)).start()
-        val loc = "http://127.0.0.1:%d/" format port
-        try {
-          import java.net.URI
-          val dsk = Class.forName("java.awt.Desktop")
-          dsk.getMethod("browse", classOf[URI]).invoke(
-            dsk.getMethod("getDesktop").invoke(null), new URI(loc)
-          )
-        } catch { case e => throw(e) }
-        p.log.info("Started Pilot at " + loc)
-        s.server.join()
-        p.log.info("Finished pilot")
+        s.filter(new Pilot(p,s)).run { server =>
+          val loc = "http://127.0.0.1:%d/" format server.port
+          try {
+            import java.net.URI
+            val dsk = Class.forName("java.awt.Desktop")
+            dsk.getMethod("browse", classOf[URI]).invoke(
+              dsk.getMethod("getDesktop").invoke(null), new URI(loc)
+            )
+          } catch { case e => () }
+          p.log.info("Started Pilot at " + loc)
+        }
       case _ =>
         p.log.error("Can only pilot a BasicScalaProject")
     }
