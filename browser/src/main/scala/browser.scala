@@ -48,7 +48,8 @@ class Browser(server: Http) extends unfiltered.Plan {
 object Server {
   def main(args: Array[String]) {
     val port = 8080
-    val server = Http(port)
+    val res = new java.net.URL(getClass.getResource("/web/robots.txt"), ".")
+    val server = Http(port).resources(res)
     server.filter(new Browser(server)).run { server =>
       val loc = "http://127.0.0.1:%d" format server.port
       println("Pilot started at " + loc)
