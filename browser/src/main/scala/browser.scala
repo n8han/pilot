@@ -28,7 +28,7 @@ class Browser(server: Http) extends unfiltered.Plan {
         <h1>{ path.getName }</h1>
         <ul class="directory"> {
           val (projs, dirs) = path.list.toList.sortWith {
-            _.toUpperCase > _.toUpperCase
+            _.toUpperCase < _.toUpperCase
           }.map { n =>
             new File(path, n)
           }.filter(dir).partition(project)
