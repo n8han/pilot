@@ -51,7 +51,7 @@ object Browser {
         <link rel="stylesheet" href="/css/blueprint/screen.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="/css/blueprint/print.css" type="text/css" media="print"/>
         <!--[if lt IE 8]><link rel="stylesheet" href="/css/blueprint/ie.css" type="text/css" media="screen, projection"/><![endif]-->
-        <style>{ "li.project a { color: orange }" }</style>
+        <link rel="stylesheet" href="/css/pilot.css" type="text/css" />
       </head>
       <body>
         <div class="container"> { content }</div>

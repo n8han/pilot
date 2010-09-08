@@ -1,0 +1,7 @@
+ul.directory { 
+    list-style-type: none
+}
+
+li.project a {
+    font-style: italic
+}
