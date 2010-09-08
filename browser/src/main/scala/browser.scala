@@ -23,11 +23,10 @@ class Browser(server: Http) extends unfiltered.Plan {
     case GET(Path(ProjectPath(path),_)) =>
       new ProcessBuilder("sbt", "pilot").directory(path).start()
       Redirect(path.getParent)
-    case GET(Path(LocalPath(path),_)) => Html(
-      <html>
-      <head><style>{ "li.project a { color: orange }" }</style></head>
-      <body>
-        <ul> {
+    case GET(Path(LocalPath(path),_)) => Browser.page(
+      <div class="prepend-5 prepend-top span-10 append-5 last">
+        <h1>{ path.getName }</h1>
+        <ul class="directory"> {
           val (projs, dirs) = path.list.toList.sortWith {
             _.toUpperCase > _.toUpperCase
           }.map { n =>
@@ -39,13 +38,27 @@ class Browser(server: Http) extends unfiltered.Plan {
             <li class={ cls }> <a href={ d.getAbsolutePath }>{ d.getName }</a> </li>
           }
         </ul>
-      </body></html>
+      </div>
     )
   }
 }
 
 /** embedded server */
-object Server {
+object Browser {
+  def page(content: scala.xml.NodeSeq) = Html(
+    <html>
+      <head>
+        <link rel="stylesheet" href="/css/blueprint/screen.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="/css/blueprint/print.css" type="text/css" media="print"/>
+        <!--[if lt IE 8]><link rel="stylesheet" href="/css/blueprint/ie.css" type="text/css" media="screen, projection"/><![endif]-->
+        <style>{ "li.project a { color: orange }" }</style>
+      </head>
+      <body>
+        <div class="container"> { content }</div>
+      </body>
+    </html>
+  )
+      
   def main(args: Array[String]) {
     val port = 8080
     val res = new java.net.URL(getClass.getResource("/web/robots.txt"), ".")
