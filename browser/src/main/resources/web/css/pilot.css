@@ -17,8 +17,8 @@ ul.directory li {
     padding-left: 30px;
 }
 
-li.project a {
-    font-style: italic;
+li.project {
+    background: url("/img/project.png") no-repeat;
 }
 
 li.dir {
