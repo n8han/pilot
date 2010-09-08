@@ -9,7 +9,7 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
     lazy val uf = "net.databinder" %% "unfiltered-server" % uf_version
     lazy val df = "net.databinder" %% "dispatch-futures" % "0.7.5"
   })
-  lazy val app = project("app", "Pilot Application", new DefaultProject(_) {
+  lazy val browser = project("browser", "Pilot Browser", new DefaultProject(_) {
     lazy val uf = "net.databinder" %% "unfiltered-server" % uf_version
   })
 }
