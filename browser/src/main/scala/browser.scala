@@ -9,10 +9,9 @@ import java.lang.ProcessBuilder
 
 /** unfiltered plan */
 class Browser(server: Http) extends unfiltered.Plan {
-  def dir(f: File) =
-    f.isDirectory && !f.getName.startsWith(".")
-
+  def dir(f: File) = f.isDirectory && !f.getName.startsWith(".")
   def project(f: File) = dir(f) && new File(f, "project/build.properties").exists
+  def name(f: File) = if (f.getName == "") "/" else f.getName
 
   class PathExtract(predicate: File => Boolean) {
     def unapply(path: String) = Some(new File(path)).filter(predicate)
@@ -25,18 +24,18 @@ class Browser(server: Http) extends unfiltered.Plan {
       Redirect(path.getParent)
     case GET(Path(LocalPath(path),_)) => Browser.page(
       <div class="prepend-5 prepend-top span-10 append-5 last">
-        <h1>{ path.getName }</h1>
+        <h1>{ name(path) }</h1>
         <ul class="directory"> {
           val (projs, dirs) = path.list.toList.sortWith {
             _.toUpperCase < _.toUpperCase
           }.map { n =>
             new File(path, n)
           }.filter(dir).partition(project)
-          val all = Seq((new File(path.getParent), "parent")) ++
+          val all = Option(path.getParent).map { n => (new File(n), "parent") }.toSeq ++
                     projs.map { p => (p, "project") } ++
                     dirs.map { d => (d, "dir") }
           for ((d, cls) <- all) yield 
-            <li class={ cls }> <a href={ d.getAbsolutePath }>{ d.getName }</a> </li>
+            <li class={ cls }> <a href={ d.getAbsolutePath }>{ name(d) }</a> </li>
           }
         </ul>
       </div>
