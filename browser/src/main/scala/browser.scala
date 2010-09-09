@@ -32,7 +32,8 @@ class Browser(server: Http) extends unfiltered.Plan {
           }.map { n =>
             new File(path, n)
           }.filter(dir).partition(project)
-          val all = projs.map { p => (p, "project") } ++
+          val all = Seq((new File(path.getParent), "parent")) ++
+                    projs.map { p => (p, "project") } ++
                     dirs.map { d => (d, "dir") }
           for ((d, cls) <- all) yield 
             <li class={ cls }> <a href={ d.getAbsolutePath }>{ d.getName }</a> </li>

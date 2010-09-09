@@ -24,3 +24,7 @@ li.project {
 li.dir {
     background: url("/img/folder.png") no-repeat;
 }
+
+li.parent {
+    background: url("/img/arrow.png") no-repeat;
+}
