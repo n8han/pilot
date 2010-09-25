@@ -2,7 +2,7 @@ package pilot
 
 import unfiltered.request._
 import unfiltered.response._
-import unfiltered.server.Http
+import unfiltered.jetty.Http
 
 class Processor extends sbt.processor.BasicProcessor {
   def apply(p: sbt.Project, s: String) = {
@@ -39,7 +39,8 @@ object Processor {
   }
 }
 
-class Pilot(p: sbt.BasicScalaProject, server: Http) extends unfiltered.Plan {
+class Pilot(p: sbt.BasicScalaProject, server: Http) extends
+    unfiltered.filter.Plan {
   import dispatch.futures.DefaultFuture._
   abstract class Button(val name: String) extends (() => Unit) {
     val html = <input type="submit" name="action" value={name} />
@@ -67,7 +68,7 @@ class Pilot(p: sbt.BasicScalaProject, server: Http) extends unfiltered.Plan {
       </form>
     </html>
   )
-  def filter = {
+  def intent = {
     case GET(Path("/",_)) => action_panel
     case POST(Path("/", Params(Action(name,_),_))) => 
       buttons.get(name).foreach { _() }

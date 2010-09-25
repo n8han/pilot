@@ -2,13 +2,13 @@ package pilot.browser
 
 import unfiltered.request._
 import unfiltered.response._
-import unfiltered.server.Http
+import unfiltered.jetty.Http
 
 import java.io.File
 import java.lang.ProcessBuilder
 
 /** unfiltered plan */
-class Browser(server: Http) extends unfiltered.Plan {
+class Browser(server: Http) extends unfiltered.filter.Plan {
   def dir(f: File) = f.isDirectory && !f.getName.startsWith(".")
   def project(f: File) = dir(f) && new File(f, "project/build.properties").exists
   def name(f: File) = if (f.getName == "") "/" else f.getName
@@ -18,7 +18,7 @@ class Browser(server: Http) extends unfiltered.Plan {
   }
   object LocalPath extends PathExtract(dir)
   object ProjectPath extends PathExtract(project)
-  def filter = {
+  def intent = {
     case GET(Path(ProjectPath(path),_)) =>
       new ProcessBuilder("sbt", "pilot").directory(path).start()
       Redirect(path.getParent)
