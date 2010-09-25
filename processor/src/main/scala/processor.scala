@@ -8,34 +8,21 @@ class Processor extends sbt.processor.BasicProcessor {
   def apply(p: sbt.Project, s: String) = {
     (p) match {
       case (p: sbt.BasicScalaProject) =>
-        Processor.findOpenPort(8080) { port =>
-          val s = Http(port)
-          s.filter(new Pilot(p,s)).run { server =>
-            val loc = "http://127.0.0.1:%d/" format server.port
-            try {
-              import java.net.URI
-              val dsk = Class.forName("java.awt.Desktop")
-              dsk.getMethod("browse", classOf[URI]).invoke(
-                dsk.getMethod("getDesktop").invoke(null), new URI(loc)
-              )
-            } catch { case e => () }
-            p.log.info("Started Pilot at " + loc)
-          }
+        val s = Http(unfiltered.Port.any)
+        s.filter(new Pilot(p,s)).run { server =>
+          val loc = "http://127.0.0.1:%d/" format server.port
+          try {
+            import java.net.URI
+            val dsk = Class.forName("java.awt.Desktop")
+            dsk.getMethod("browse", classOf[URI]).invoke(
+              dsk.getMethod("getDesktop").invoke(null), new URI(loc)
+            )
+          } catch { case e => () }
+          p.log.info("Started Pilot at " + loc)
         }
       case _ =>
         p.log.error("Can only pilot a BasicScalaProject")
     }
-  }
-}
-
-object Processor {
-  def findOpenPort[T](port: Int)(use: Int => T) = {
-    def attempt(p: Int): T = try {
-      use(p)
-    } catch {
-      case e: java.net.BindException if (p - port < 100) => attempt(p + 1)
-    }
-    attempt(port)
   }
 }
 

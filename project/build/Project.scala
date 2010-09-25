@@ -1,7 +1,7 @@
 import sbt._
 
 class Project(info: ProjectInfo) extends ParentProject(info) {
-  val uf_version = "0.2.0"
+  val uf_version = "0.2.1-SNAPSHOT"
 
   lazy val processor = project("processor", "Pilot Processor", new ProcessorProject(_) {
     override def buildScalaVersion = "2.7.7"
