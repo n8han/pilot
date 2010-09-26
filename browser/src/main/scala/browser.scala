@@ -64,16 +64,11 @@ object Browser {
     val res = new java.net.URL(getClass.getResource("/web/robots.txt"), ".")
     val server = Http(port).resources(res)
     server.filter(new Browser(server)).run { server =>
-      val loc = "http://127.0.0.1:%d" format server.port
-      println("Pilot started at " + loc)
       val home = System.getProperty("user.home")
-      try {
-        import java.net.URI
-        val dsk = Class.forName("java.awt.Desktop")
-        dsk.getMethod("browse", classOf[URI]).invoke(
-          dsk.getMethod("getDesktop").invoke(null), new URI(loc + home)
-        )
-      } catch { case e => () }
+      val loc = "http://127.0.0.1:%d%s" format (server.port, home)
+      unfiltered.Browser.open(loc) foreach { exc =>
+        println("Started Pilot at " + loc)
+      }
     }
   }
 }
