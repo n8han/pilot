@@ -18,8 +18,11 @@ class Browser(server: Http) extends unfiltered.filter.Plan {
   object LocalPath extends PathExtract(dir)
   object ProjectPath extends PathExtract(project)
   def intent = {
-    case GET(Path(ProjectPath(path), Jsonp(wrapper, _))) =>
-      ResponseString(wrapper.wrap(Process.pilot(path).getOrElse("error")))
+    case GET(Path(LocalPath(path), Jsonp(wrapper, _))) =>
+      val result = Process.pilot(path).getOrElse("fail")
+      import net.liftweb.json.JsonAST._
+      import net.liftweb.json.JsonDSL._
+      ResponseString(wrapper.wrap(pretty(render(result))))
     case GET(Path(LocalPath(path),_)) => Browser.page(
       <div class="prepend-5 prepend-top span-10 append-5 last">
         <h1>{ name(path) }</h1>
@@ -50,6 +53,8 @@ object Browser {
         <link rel="stylesheet" href="/css/blueprint/print.css" type="text/css" media="print"/>
         <!--[if lt IE 8]><link rel="stylesheet" href="/css/blueprint/ie.css" type="text/css" media="screen, projection"/><![endif]-->
         <link rel="stylesheet" href="/css/pilot.css" type="text/css" />
+        <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
+        <script type="text/javascript" src="/js/browser.js"></script>
        </head>
       <body>
         <div class="container"> { content }</div>
