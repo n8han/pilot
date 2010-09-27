@@ -13,6 +13,7 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
   lazy val browser = project("browser", "Pilot Browser", new DefaultProject(_) {
     lazy val ufj = "net.databinder" %% "unfiltered-jetty" % uf_version
     lazy val uff = "net.databinder" %% "unfiltered-filter" % uf_version
+    lazy val ufjs = "net.databinder" %% "unfiltered-json" % uf_version
   })
 }
 

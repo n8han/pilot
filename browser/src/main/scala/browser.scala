@@ -5,7 +5,6 @@ import unfiltered.response._
 import unfiltered.jetty.Http
 
 import java.io.File
-import java.lang.ProcessBuilder
 
 /** unfiltered plan */
 class Browser(server: Http) extends unfiltered.filter.Plan {
@@ -19,9 +18,8 @@ class Browser(server: Http) extends unfiltered.filter.Plan {
   object LocalPath extends PathExtract(dir)
   object ProjectPath extends PathExtract(project)
   def intent = {
-    case GET(Path(ProjectPath(path),_)) =>
-      new ProcessBuilder("sbt", "pilot").directory(path).start()
-      Redirect(path.getParent)
+    case GET(Path(ProjectPath(path), Jsonp(wrapper, _))) =>
+      ResponseString(wrapper.wrap(Process.pilot(path).getOrElse("error")))
     case GET(Path(LocalPath(path),_)) => Browser.page(
       <div class="prepend-5 prepend-top span-10 append-5 last">
         <h1>{ name(path) }</h1>
@@ -52,7 +50,7 @@ object Browser {
         <link rel="stylesheet" href="/css/blueprint/print.css" type="text/css" media="print"/>
         <!--[if lt IE 8]><link rel="stylesheet" href="/css/blueprint/ie.css" type="text/css" media="screen, projection"/><![endif]-->
         <link rel="stylesheet" href="/css/pilot.css" type="text/css" />
-      </head>
+       </head>
       <body>
         <div class="container"> { content }</div>
       </body>
