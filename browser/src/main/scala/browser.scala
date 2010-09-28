@@ -64,8 +64,7 @@ object Browser {
       
   def main(args: Array[String]) {
     val port = 8080
-    val res = new java.net.URL(getClass.getResource("/web/robots.txt"), ".")
-    val server = Http(port).resources(res)
+    val server = Http(port).resources(pilot.Shared.resources)
     server.filter(new Browser(server)).run { server =>
       val home = System.getProperty("user.home")
       val loc = "http://127.0.0.1:%d%s" format (server.port, home)
