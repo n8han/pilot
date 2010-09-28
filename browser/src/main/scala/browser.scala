@@ -23,16 +23,17 @@ class Browser(server: Http) extends unfiltered.filter.Plan {
       import net.liftweb.json.JsonAST._
       import net.liftweb.json.JsonDSL._
       ResponseString(wrapper.wrap(pretty(render(result))))
-    case GET(Path(LocalPath(path),_)) => Browser.page(
+    case GET(Path(LocalPath(path),_)) => pilot.Shared.page(
       <div class="prepend-5 prepend-top span-10 append-5 last">
         <h1>{ name(path) }</h1>
         <ul class="directory"> {
-          val (projs, dirs) = path.list.toList.sortWith {
+          val (projs, dirs) = path.list.toList.sort {
             _.toUpperCase < _.toUpperCase
           }.map { n =>
             new File(path, n)
           }.filter(dir).partition(project)
-          val all = Option(path.getParent).map { n => (new File(n), "parent") }.toSeq ++
+          def opt[T](t: T) = if (t == null) None else Some(t)
+          val all = opt(path.getParent).map { n => (new File(n), "parent") }.toSeq ++
                     projs.map { p => (p, "project") } ++
                     dirs.map { d => (d, "dir") }
           for ((d, cls) <- all) yield 
@@ -45,23 +46,7 @@ class Browser(server: Http) extends unfiltered.filter.Plan {
 }
 
 /** embedded server */
-object Browser {
-  def page(content: scala.xml.NodeSeq) = Html(
-    <html>
-      <head>
-        <link rel="stylesheet" href="/css/blueprint/screen.css" type="text/css" media="screen, projection"/>
-        <link rel="stylesheet" href="/css/blueprint/print.css" type="text/css" media="print"/>
-        <!--[if lt IE 8]><link rel="stylesheet" href="/css/blueprint/ie.css" type="text/css" media="screen, projection"/><![endif]-->
-        <link rel="stylesheet" href="/css/pilot.css" type="text/css" />
-        <script type="text/javascript" src="/js/jquery-1.4.2.min.js"></script>
-        <script type="text/javascript" src="/js/browser.js"></script>
-       </head>
-      <body>
-        <div class="container"> { content }</div>
-      </body>
-    </html>
-  )
-      
+object BrowserServer {
   def main(args: Array[String]) {
     val port = 8080
     val server = Http(port).resources(pilot.Shared.resources)

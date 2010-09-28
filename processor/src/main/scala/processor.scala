@@ -8,7 +8,7 @@ class Processor extends sbt.processor.BasicProcessor {
   def apply(p: sbt.Project, s: String) = {
     (p) match {
       case (p: sbt.BasicScalaProject) =>
-        val s = Http(unfiltered.Port.any)
+        val s = Http(unfiltered.Port.any).resources(pilot.Shared.resources)
         s.filter(new Pilot(p,s)).run { server =>
           println("Serving: http://127.0.0.1:%d/" format server.port )
         }
@@ -40,12 +40,11 @@ class Pilot(p: sbt.BasicScalaProject, server: Http) extends
     Compile :: Run :: Clean :: Exit :: Nil
   )) { (m, a) => m + (a.name -> a) }
   object Action extends Params.Extract("action", Params.first ~> Params.nonempty)
-  val action_panel = new Html(
-    <html>
-      <form method="POST">
-        { buttons.values.map { _.html } }
-      </form>
-    </html>
+  val action_panel = pilot.Shared.page(
+    <h1> { p.name } </h1>
+    <form method="POST">
+      { buttons.values.map { _.html } }
+    </form>
   )
   def intent = {
     case GET(Path("/",_)) => action_panel
