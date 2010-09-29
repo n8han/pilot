@@ -48,8 +48,7 @@ class Browser(server: Http) extends unfiltered.filter.Plan {
 /** embedded server */
 object BrowserServer {
   def main(args: Array[String]) {
-    val port = 8080
-    val server = Http(port).resources(pilot.Shared.resources)
+    val server = Http(unfiltered.Port.any).resources(pilot.Shared.resources)
     server.filter(new Browser(server)).run { server =>
       val home = System.getProperty("user.home")
       val loc = "http://127.0.0.1:%d%s" format (server.port, home)
@@ -57,5 +56,6 @@ object BrowserServer {
         println("Started Pilot at " + loc)
       }
     }
+    Process.stop()
   }
 }

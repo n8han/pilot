@@ -13,6 +13,7 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
     lazy val df = "net.databinder" %% "dispatch-futures" % "0.7.6"
   }, shared)
   lazy val browser = project("browser", "Pilot Browser", new DefaultProject(_) {
+    lazy val df = "net.databinder" %% "dispatch-http" % "0.7.6"
   }, shared)
 }
 
