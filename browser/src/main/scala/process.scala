@@ -12,7 +12,6 @@ object Process {
       reader.readLine() match {
         case null => None
         case Serving(loc) => 
-          println("found the loc")
           servers = loc :: servers
           Some(loc)
         case _ => handle(reader)
@@ -23,7 +22,9 @@ object Process {
     import dispatch._
     import Http._
     servers foreach { s =>
-      (new Http)(s << Map("action" -> "Exit") >|)
+      try { (new Http)(s << Map("action" -> "Exit") >|) } catch {
+        case e: java.net.ConnectException => ()
+      }
     }
   }
 }
