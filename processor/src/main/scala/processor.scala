@@ -18,20 +18,20 @@ class Processor extends sbt.processor.BasicProcessor {
   }
 }
 
-class Pilot(p: sbt.BasicScalaProject, server: Http) extends
+class Pilot(project: sbt.BasicScalaProject, server: Http) extends
     unfiltered.filter.Plan {
   import dispatch.futures.DefaultFuture._
   abstract class Button(val name: String) extends (() => Unit) {
     val html = <input type="submit" name="action" value={name} />
   }
   object Compile extends Button("Compile") {
-    def apply() { p.compile.run }
+    def apply() { project.compile.run }
   }
   object Run extends Button("Run") {
-    def apply() { p.run(Array()) }
+    def apply() { project.run(Array()) }
   }
   object Clean extends Button("Clean") {
-    def apply() { p.clean.run }
+    def apply() { project.clean.run }
   }
   object Exit extends Button("Exit") {
     def apply() { future { Thread.sleep(500); server.stop() } }
@@ -41,7 +41,7 @@ class Pilot(p: sbt.BasicScalaProject, server: Http) extends
   )) { (m, a) => m + (a.name -> a) }
   object Action extends Params.Extract("action", Params.first ~> Params.nonempty)
   val action_panel = pilot.Shared.page(
-    <h1> { p.name } </h1>
+    <h1> { project.name } </h1>
     <form method="POST">
       { buttons.values.map { _.html } }
     </form>
