@@ -17,11 +17,12 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
   import dispatch.futures.DefaultFuture._
   def intent = {
     case GET(Path("/",_)) => pilot.Shared.page(
-      <h1>{ project.name }</h1>
-      <form method="POST">
-        <input type="submit" name="action" value="Exit" />
-      </form>
-
+      <div class="prepend-top span-15 append-5 last">
+        <h1>{ project.name }</h1>
+        <form method="POST">
+          <input type="submit" name="action" value="Exit" />
+        </form>
+      </div>
     )
     case POST(Path("/", Params(Action("Exit",_),_))) => 
       future { Thread.sleep(500); server.stop() }

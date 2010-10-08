@@ -1,7 +1,7 @@
 import sbt._
 
 class Project(info: ProjectInfo) extends ParentProject(info) {
-  val uf_version = "0.2.1-SNAPSHOT"
+  val uf_version = "0.2.2-SNAPSHOT"
 
   lazy val shared = project("shared", "Pilot Resources", new DefaultProject(_) {
     lazy val ufj = "net.databinder" %% "unfiltered-jetty" % uf_version
