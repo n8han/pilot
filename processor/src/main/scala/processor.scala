@@ -6,9 +6,9 @@ import unfiltered.jetty.Http
 
 class Processor extends sbt.processor.BasicProcessor {
   def apply(p: sbt.Project, s: String) = {
-    val s = Http(unfiltered.Port.any).resources(pilot.Shared.resources)
+    val s = Http(unfiltered.Port.any, "127.0.0.1").resources(pilot.Shared.resources)
     s.filter(new Pilot(p,s)).run { server =>
-      println("Serving: http://127.0.0.1:%d/" format server.port )
+      println("Serving: " + server.url )
     }
   }
 }

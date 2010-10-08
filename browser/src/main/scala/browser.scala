@@ -40,10 +40,10 @@ class Browser(server: Http) extends unfiltered.filter.Plan {
 /** embedded server */
 object BrowserServer {
   def main(args: Array[String]) {
-    val server = Http(unfiltered.Port.any).resources(pilot.Shared.resources)
+    val server = Http(unfiltered.Port.any, "127.0.0.1").resources(pilot.Shared.resources)
     server.filter(new Browser(server)).run { server =>
       val home = System.getProperty("user.home")
-      val loc = "http://127.0.0.1:%d%s" format (server.port, home)
+      val loc = server.url + home.substring(1)
       unfiltered.Browser.open(loc) foreach { exc =>
         println("Started Pilot at " + loc)
       }
