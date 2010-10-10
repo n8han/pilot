@@ -10,15 +10,23 @@ import java.io.File
 class Browser(server: Http) extends unfiltered.filter.Plan {
   import Directory._
   def intent = {
-    case GET(Path(LocalPath(path), Jsonp(wrapper, _))) =>
+    case GET(Path(FullPath(path), Jsonp(wrapper, _))) =>
       val result = Process.pilot(path).getOrElse("fail")
       import net.liftweb.json.JsonAST._
       import net.liftweb.json.JsonDSL._
       ResponseString(wrapper.wrap(pretty(render(result))))
-    case GET(Path(LocalPath(path),_)) => pilot.Shared.page(
+    case GET(Path(FullPath(path),_)) => pilot.Shared.page(
       <div class="prepend-top span-15 append-5 last">
         <h1>{ name(path) }</h1>
-        { Directory.ul(path) }
+        <ul class="directory"> {
+          val (projs, dirs) = children(path).filter(dir).partition(project)
+          def opt[T](t: T) = if (t == null) None else Some(t)
+          val all = opt(path.getParent).map { n => (new File(n), "parent") }.toSeq ++
+                    projs.map { p => (p, "project") } ++
+                    dirs.map { d => (d, "dir") }
+          for ((d, cls) <- all) yield 
+            <li class={ cls }> <a href={ d.getCanonicalPath }>{ name(d) }</a> </li>
+        } </ul>
       </div>
     )
   }
