@@ -11,6 +11,7 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
   lazy val processor = project("processor", "Pilot Processor", new ProcessorProject(_) {
     // unfiltered
     lazy val df = "net.databinder" %% "dispatch-futures" % "0.7.6"
+    override def compileOptions = super.compileOptions ++ Seq(Unchecked)
   }, shared)
   lazy val browser = project("browser", "Pilot Browser", new DefaultProject(_) {
     lazy val df = "net.databinder" %% "dispatch-http" % "0.7.6"
