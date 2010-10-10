@@ -48,20 +48,23 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
         <ul class="directory">{ children_li(path) }</ul>
       </div>
     )
+  def project_paths = project.subProjects.values.map { sp =>
+    sp.info.projectPath.asFile.getCanonicalPath
+  }
   def flyable(path: File): Option[sbt.BasicScalaProject] =
     project match {
       case project: sbt.BasicScalaProject => Some(project)
       case project => 
-        val cur = path.getAbsolutePath
-        project.subProjects.values.find { p =>
-          cur.startsWith(p.info.projectPath.absolutePath)
+        val cur = path.getCanonicalPath
+        project.subProjects.values.find { sp =>
+          cur.startsWith(sp.info.projectPath.asFile.getCanonicalPath)
         }.flatMap {
           case p: sbt.BasicScalaProject => Some(p)
           case _ => None
         }
     }
   def children_li(path: File) = {
-    val (dirs,files) = Directory.children(path).filter { f =>
+    val (all_dirs,files) = Directory.children(path).filter { f =>
       f.getName match {
         case "lib_managed" | "src_managed" | "target" => false
         case name if name.startsWith(".") => false
@@ -74,18 +77,20 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
       case `project_path` => "/"
       case full => full.substring(prefix)
     }
-    val parent_li = Some(path).filter { 
+    val parents = Some(path).filter { 
       _.getCanonicalPath != project_path
-    }.map { d => new File(d.getParent) }.map { d =>
-      <li class="parent"> <a href={ relative(d) }>{ d.getName }</a> </li>
+    }.map { d => new File(d.getParent) }
+    val (subpjs, dirs) = all_dirs.partition { d =>
+      project_paths.contains(d.getCanonicalPath)
     }
-    val dirs_li = dirs map { d =>
-      <li class="dir"> <a href={ relative(d) }>{ d.getName }</a> </li>
-    }
-    val files_li = files map { f =>
+    ( parents.map { (_, "parent") } ++
+      subpjs.map { (_, "subproject") } ++
+      dirs.map { (_, "dir") }
+    ).map { case (d, cl) =>
+        <li class={ cl }> <a href={ relative(d) }>{ d.getName }</a> </li>
+    } ++ files.map { f =>
       <li class="file">{ f.getName }</li>
     }
-    parent_li ++ dirs_li ++ files_li
   }
 }
 

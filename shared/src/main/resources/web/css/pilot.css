@@ -17,7 +17,7 @@ ul.directory li {
     padding-left: 30px;
 }
 
-li.project {
+li.project, li.subproject {
     background: url("/img/project.png") no-repeat;
 }
 
@@ -27,4 +27,8 @@ li.dir {
 
 li.parent {
     background: url("/img/arrow.png") no-repeat;
+}
+
+li.file {
+    background: url("/img/file.png") no-repeat;
 }
