@@ -22,6 +22,7 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
         <form method="POST">
           <input type="submit" name="action" value="Exit" />
         </form>
+        { Directory.ul(project.info.projectPath.asFile) }
       </div>
     )
     case POST(Path("/", Params(Action("Exit",_),_))) => 

@@ -18,20 +18,7 @@ class Browser(server: Http) extends unfiltered.filter.Plan {
     case GET(Path(LocalPath(path),_)) => pilot.Shared.page(
       <div class="prepend-top span-15 append-5 last">
         <h1>{ name(path) }</h1>
-        <ul class="directory"> {
-          val (projs, dirs) = path.list.toList.sort {
-            _.toUpperCase < _.toUpperCase
-          }.map { n =>
-            new File(path, n)
-          }.filter(dir).partition(project)
-          def opt[T](t: T) = if (t == null) None else Some(t)
-          val all = opt(path.getParent).map { n => (new File(n), "parent") }.toSeq ++
-                    projs.map { p => (p, "project") } ++
-                    dirs.map { d => (d, "dir") }
-          for ((d, cls) <- all) yield 
-            <li class={ cls }> <a href={ d.getAbsolutePath }>{ name(d) }</a> </li>
-          }
-        </ul>
+        { Directory.ul(path) }
       </div>
     )
   }
