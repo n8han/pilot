@@ -35,8 +35,12 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
   }
   def page(path: File) =
     pilot.Shared.page(
-      <div class="prepend-top span-15 append-5 last">
-        <h1>{ project.name }</h1>
+      <div class="prepend-top span-20 last">
+        <h1>{ 
+          (Seq(project.name) ++ 
+            flyable(path).filter { _ != project }.map(_.name)
+          ).mkString(": ") 
+        }</h1>
         <form method="POST" class="controls">
           <input type="image" src="/img/Exit.png" name="action" value="Exit" />{ 
             flyable(path).toList.flatMap { _ =>
