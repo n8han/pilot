@@ -32,3 +32,11 @@ li.parent {
 li.file {
     background: url("/img/file.png") no-repeat;
 }
+
+form.controls {
+  margin: 15px 0;
+}
+
+form.controls input {
+  margin-right: 5px;
+}

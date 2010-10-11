@@ -37,9 +37,8 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
     pilot.Shared.page(
       <div class="prepend-top span-15 append-5 last">
         <h1>{ project.name }</h1>
-        <form method="POST">
-          <input type="submit" name="action" value="Exit" />
-          { 
+        <form method="POST" class="controls">
+          <input type="image" src="/img/Exit.png" name="action" value="Exit" />{ 
             flyable(path).toList.flatMap { _ =>
               Buttons.all.values.toList.map { _.html }
             }
@@ -100,7 +99,8 @@ object Buttons {
   object Action extends Params.Extract("action", Params.first ~> Params.nonempty)
   
   abstract class Button(val name: String) extends (BSP => Unit) {
-    val html = <input type="submit" name="action" value={name} />
+    val png = "/img/%s.png".format(name)
+    val html = <input type="image" src={ png } name="action" value={name} />
   }
   object Compile extends Button("Compile") {
     def apply(proj: BSP) { proj.compile.run }
@@ -108,10 +108,7 @@ object Buttons {
   object Run extends Button("Run") {
     def apply(proj: BSP) { future { proj.run.apply(Array()).run } }
   }
-  object Clean extends Button("Clean") {
-    def apply(proj: BSP) { proj.clean.run }
-  }
   val all = (Map.empty[String, Button] /: (
-    Compile :: Run :: Clean :: Nil
+    Run :: Compile :: Nil
   )) { (m, a) => m + (a.name -> a) }
 }
