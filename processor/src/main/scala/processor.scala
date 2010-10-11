@@ -5,6 +5,7 @@ import unfiltered.response._
 import unfiltered.jetty.Http
 
 import java.io.File
+import dispatch.futures.DefaultFuture._
 
 class Processor extends sbt.processor.BasicProcessor {
   def apply(p: sbt.Project, s: String) = {
@@ -21,7 +22,6 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
     def unapply(p: File) = flyable(p) map { (p, _) }
   }
 
-  import dispatch.futures.DefaultFuture._
   def intent = {
     case GET(Path(LocalPath(path),_)) => 
       page(path)
@@ -106,7 +106,7 @@ object Buttons {
     def apply(proj: BSP) { proj.compile.run }
   }
   object Run extends Button("Run") {
-    def apply(proj: BSP) { proj.run.apply(Array()).run }
+    def apply(proj: BSP) { future { proj.run.apply(Array()).run } }
   }
   object Clean extends Button("Clean") {
     def apply(proj: BSP) { proj.clean.run }
