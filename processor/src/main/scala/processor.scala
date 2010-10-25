@@ -9,7 +9,7 @@ import dispatch.futures.DefaultFuture._
 
 class Processor extends sbt.processor.BasicProcessor {
   def apply(p: sbt.Project, s: String) = {
-    val s = Http(unfiltered.Port.any, "127.0.0.1").resources(pilot.Shared.resources)
+    val s = Http.anylocal.resources(pilot.Shared.resources)
     s.filter(new Pilot(p,s)).run { server =>
       println("Serving: " + server.url )
     }
