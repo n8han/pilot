@@ -8,6 +8,7 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
                             new DefaultProject(_) with CoffeeScriptCompile 
   {
     def jsOutput = "src_managed" / "main" / "resources"
+    override def cleanAction = super.cleanAction dependsOn cleanTask(jsOutput)
     override def coffeeScriptCompiledOuputDirectory = jsOutput.asFile.getPath
     override def mainResources = 
       super.mainResources +++ descendents(jsOutput ##, "*")
