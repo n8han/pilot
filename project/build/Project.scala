@@ -1,9 +1,17 @@
 import sbt._
+import org.coffeescript.CoffeeScriptCompile
 
 class Project(info: ProjectInfo) extends ParentProject(info) {
   val uf_version = "0.2.2"
 
-  lazy val shared = project("shared", "Pilot Resources", new DefaultProject(_) {
+  lazy val shared = project("shared", "Pilot Resources", 
+                            new DefaultProject(_) with CoffeeScriptCompile 
+  {
+    def jsOutput = "src_managed" / "main" / "resources"
+    override def coffeeScriptCompiledOuputDirectory = jsOutput.asFile.getPath
+    override def mainResources = 
+      super.mainResources +++ descendents(jsOutput ##, "*")
+    override def compileAction = super.compileAction dependsOn compileCoffeeScript
     lazy val ufj = "net.databinder" %% "unfiltered-jetty" % uf_version
     lazy val uff = "net.databinder" %% "unfiltered-filter" % uf_version
     lazy val ufjs = "net.databinder" %% "unfiltered-json" % uf_version
