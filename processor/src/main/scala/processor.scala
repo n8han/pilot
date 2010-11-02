@@ -17,7 +17,7 @@ class Processor extends sbt.processor.BasicProcessor {
 }
 
 class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
-  object LocalPath extends PathExtract(project.info.projectPath.asFile, Directory.dir)
+  object LocalPath extends PathExtract(project.info.projectPath.asFile, Directory.file)
   object Flyable {
     def unapply(p: File) = flyable(p) map { (p, _) }
   }
@@ -33,7 +33,8 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
       Buttons.all.get(name).foreach { _(flyproj) }
       page(path)
   }
-  def page(path: File) =
+  def page(file: File) = {
+    val path = if (file.isDirectory) file else new File(file.getParent)
     pilot.Shared.page(
       <div class="prepend-top span-20 last">
         <h1>{ 
@@ -41,6 +42,8 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
             flyable(path).filter { _ != project }.map(_.name)
           ).mkString(": ") 
         }</h1>
+      </div>
+      <div class="prepend-top span-6">
         <form method="POST" class="controls">
           <input type="image" src="/img/Exit.png" name="action" value="Exit" />{ 
             flyable(path).toList.flatMap { _ =>
@@ -50,7 +53,13 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
         </form>
         <ul class="directory">{ children_li(path) }</ul>
       </div>
+      <div class="prepend-top span-14 last"> {
+        Seq(file).filter { !_.isDirectory } map { file =>
+            <h2> { file.getName } </h2>
+        }
+      } </div>
     )
+  }
   def project_paths = project.subProjects.values.map { sp =>
     sp.info.projectPath.asFile.getCanonicalPath
   }
@@ -92,7 +101,7 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
     ).map { case (d, cl) =>
         <li class={ cl }> <a href={ relative(d) }>{ d.getName }</a> </li>
     } ++ files.map { f =>
-      <li class="file">{ f.getName }</li>
+      <li class="file"><a href={relative(f)}>{ f.getName }</a></li>
     }
   }
 }

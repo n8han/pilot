@@ -3,7 +3,8 @@ package pilot
 import java.io.File
 
 object Directory {
-  def dir(f: File) = f.isDirectory && !f.getName.startsWith(".")
+  def file(f: File) = f.exists && !f.getName.startsWith(".")
+  def dir(f: File) = file(f) && f.isDirectory
   def project(f: File) = dir(f) && new File(f, "project/build.properties").exists
   def name(f: File) = if (f.getName == "") "/" else f.getName
   def children(path: File) = 
