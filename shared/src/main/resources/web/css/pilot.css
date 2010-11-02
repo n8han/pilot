@@ -40,3 +40,7 @@ form.controls {
 form.controls input {
   margin-right: 5px;
 }
+
+textarea {
+  width: 100%;
+}

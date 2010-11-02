@@ -54,8 +54,10 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
         <ul class="directory">{ children_li(path) }</ul>
       </div>
       <div class="prepend-top span-14 last"> {
-        Seq(file).filter { !_.isDirectory } map { file =>
-            <h2> { file.getName } </h2>
+        Seq(file).filter { !_.isDirectory } flatMap { file =>
+          sbt.FileUtilities.readString(file, project.log).right.toSeq.map { str =>
+            <textarea> { str } </textarea>
+          }
         }
       } </div>
     )
