@@ -31,7 +31,7 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
     case POST(Path(LocalPath(Flyable(path, flyproj)), 
                    Params(Buttons.Action(name,_),_))) => 
       Buttons.all.get(name).foreach { _(flyproj) }
-      page(path)
+      ResponseString(name)
   }
   def page(file: File) = {
     val path = if (file.isDirectory) file else new File(file.getParent)

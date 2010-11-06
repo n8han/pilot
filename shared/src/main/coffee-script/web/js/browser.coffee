@@ -11,14 +11,14 @@ $( ->
         )
         false
     )
-    $("input[value=Exit]").click( ->
+    $("input[name=action]").click( ->
         $.ajax(
-            url: "/"
             type: "POST"
             data:
-                action: "Exit"
+                action: @value
         )
-        window.close()
+        if @value == "Exit"
+           window.close()
         false
     )
 )
