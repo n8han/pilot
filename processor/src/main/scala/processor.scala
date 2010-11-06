@@ -56,6 +56,7 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
       <div class="prepend-top span-14 last"> {
         Seq(file).filter { !_.isDirectory } flatMap { file =>
           sbt.FileUtilities.readString(file, project.log).right.toSeq.map { str =>
+            <h3>{ file.getName }</h3>
             <textarea> { str } </textarea>
           }
         }
