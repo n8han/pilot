@@ -16,7 +16,7 @@ class Browser(server: Http) extends unfiltered.filter.Plan {
       import net.liftweb.json.JsonDSL._
       ResponseString(wrapper.wrap(pretty(render(result))))
     case GET(Path(FullPath(path),_)) => pilot.Shared.page(
-      <div class="prepend-top span-15 append-5 last">
+      <div class="prepend-top span-22">
         <h1>{ name(path) }</h1>
         <ul class="directory"> {
           val (projs, dirs) = children(path).filter(dir).partition(project)

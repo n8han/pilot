@@ -39,7 +39,7 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
   def page(file: File) = {
     val path = if (file.isDirectory) file else new File(file.getParent)
     pilot.Shared.page(
-      <div class="prepend-top span-20 last">
+      <div class="prepend-top span-22 last">
         <h1>{ 
           (Seq(project.name) ++ 
             flyable(path).filter { _ != project }.map(_.name)
@@ -56,11 +56,11 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
         </form>
         <ul class="directory">{ children_li(path) }</ul>
       </div>
-      <div class="prepend-top span-14 last"> {
+      <div class="prepend-top span-16 last"> {
         Seq(file).filter { !_.isDirectory } flatMap { file =>
           sbt.FileUtilities.readString(file, project.log).right.toSeq.map { str =>
             <h3>{ file.getName }</h3>
-            <textarea> { str } </textarea>
+            <textarea>{ str }</textarea>
           }
         }
       } </div>
