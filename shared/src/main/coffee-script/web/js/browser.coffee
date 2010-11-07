@@ -12,10 +12,13 @@ $( ->
         false
     )
     $("input[name=action]").click( ->
+        data = action: @value
+        $("textarea").each( (i, ta) ->
+            data.contents = ta.value
+        )
         $.ajax(
             type: "POST"
-            data:
-                action: @value
+            data: data
         )
         if @value == "Exit"
            window.close()

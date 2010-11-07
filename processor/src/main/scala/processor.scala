@@ -25,11 +25,14 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
   def intent = {
     case GET(Path(LocalPath(path),_)) => 
       page(path)
-    case POST(Params(Buttons.Action("Exit",_),_)) => 
+    case POST(Params(Action("Exit",_),_)) => 
       future { Thread.sleep(500); server.stop() }
       ResponseString("Exited")
-    case POST(Path(LocalPath(Flyable(path, flyproj)), 
-                   Params(Buttons.Action(name,_),_))) => 
+    case POST(Path(LocalPath(Flyable(path, flyproj)),Params(Action(name,params),_))) =>
+      params match {
+        case Contents(c, _) => sbt.FileUtilities.write(path, c, project.log)
+        case _ => ()
+      }
       Buttons.all.get(name).foreach { _(flyproj) }
       ResponseString(name)
   }
@@ -109,11 +112,12 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
   }
 }
 
+object Action extends Params.Extract("action", Params.first ~> Params.nonempty)
+object Contents extends Params.Extract("contents", Params.first)
+
 object Buttons {
   import sbt.{BasicScalaProject=>BSP}
 
-  object Action extends Params.Extract("action", Params.first ~> Params.nonempty)
-  
   abstract class Button(val name: String) extends (BSP => Unit) {
     val png = "/img/%s.png".format(name)
     val html = <input type="image" src={ png } name="action" value={name} />
