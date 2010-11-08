@@ -52,7 +52,7 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
             flyable(path).toList.flatMap { _ =>
               Buttons.all.values.toList.map { _.html }
             }
-          }
+          }<img src="/img/plane.png" class="plane" />
         </form>
         <ul class="directory">{ children_li(path) }</ul>
       </div>
@@ -126,7 +126,13 @@ object Buttons {
     def apply(proj: BSP) { proj.compile.run }
   }
   object Run extends Button("Run") {
-    def apply(proj: BSP) { future { proj.run.apply(Array()).run } }
+    def apply(proj: BSP) {
+      val error = proj.compile.run
+      error getOrElse {
+        future { proj.run.apply(Array()).run }
+        "Running..."
+      }
+    }
   }
   val all = (Map.empty[String, Button] /: (
     Run :: Compile :: Nil

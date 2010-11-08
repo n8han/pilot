@@ -34,13 +34,18 @@ li.file {
 }
 
 form.controls {
-  margin: 0 0 15px 0;
+    margin: 0 0 15px 0;
 }
 
 form.controls input {
-  margin-right: 5px;
+    margin-right: 5px;
 }
 
 textarea {
-  width: 100%;
+    width: 100%;
+}
+
+img.plane {
+    position: absolute;
+    display: none;
 }

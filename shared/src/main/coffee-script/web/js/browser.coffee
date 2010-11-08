@@ -16,12 +16,17 @@ $( ->
         $("textarea").each( (i, ta) ->
             data.contents = ta.value
         )
+        plane = $("img.plane")
         $.ajax(
             type: "POST"
             data: data
+            success: (data, code, req) ->
+                plane.hide()
         )
         if @value == "Exit"
-           window.close()
+            window.close()
+        else
+            plane.show()
         false
     )
 )
