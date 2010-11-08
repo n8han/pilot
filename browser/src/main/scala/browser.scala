@@ -36,13 +36,12 @@ class Browser(server: Http) extends unfiltered.filter.Plan {
 object BrowserServer {
   def main(args: Array[String]) {
     val server = Http.anylocal.resources(pilot.Shared.resources)
-    server.filter(new Browser(server)).run { server =>
+    server.filter(new Browser(server)).run({ server =>
       val home = System.getProperty("user.home")
       val loc = server.url + home.substring(1)
       unfiltered.util.Browser.open(loc) foreach { exc =>
         println("Started Pilot at " + loc)
       }
-    }
-    Process.stop()
+    }, { _ => Process.stop() })
   }
 }
