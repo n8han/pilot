@@ -33,8 +33,13 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
         case Contents(c, _) => sbt.FileUtilities.write(path, c, project.log)
         case _ => ()
       }
-      Buttons.all.get(name).foreach { _(flyproj) }
-      ResponseString(name)
+      Buttons.all.get(name).map { button =>
+        button(flyproj) map { error =>
+          InternalServerError ~> ResponseString(error)
+        } getOrElse { Ok }
+      } getOrElse {
+        BadRequest
+      }
   }
   def page(file: File) = {
     val path = if (file.isDirectory) file else new File(file.getParent)
@@ -118,21 +123,19 @@ object Contents extends Params.Extract("contents", Params.first)
 object Buttons {
   import sbt.{BasicScalaProject=>BSP}
 
-  abstract class Button(val name: String) extends (BSP => Unit) {
+  abstract class Button(val name: String) extends (BSP => Option[String]) {
     val png = "/img/%s.png".format(name)
     val html = <input type="image" src={ png } name="action" value={name} />
   }
   object Compile extends Button("Compile") {
-    def apply(proj: BSP) { proj.compile.run }
+    def apply(proj: BSP) = proj.compile.run
   }
   object Run extends Button("Run") {
-    def apply(proj: BSP) {
-      val error = proj.compile.run
-      error getOrElse {
+    def apply(proj: BSP) =
+      proj.compile.run orElse {
         future { proj.run.apply(Array()).run }
-        "Running..."
+        None
       }
-    }
   }
   val all = (Map.empty[String, Button] /: (
     Run :: Compile :: Nil

@@ -20,7 +20,9 @@ $( ->
         $.ajax(
             type: "POST"
             data: data
-            success: (data, code, req) ->
+            error: (req, status, exc) ->
+                alert(req.responseText)
+            complete: (req, status) ->
                 plane.hide()
         )
         if @value == "Exit"
