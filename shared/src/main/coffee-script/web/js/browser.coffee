@@ -21,7 +21,9 @@ $( ->
             type: "POST"
             data: data
             error: (req, status, exc) ->
-                alert(req.responseText)
+                $('#output').show().html(req.responseText)
+            success: (req, status) ->
+                $('#output').hide()
             complete: (req, status) ->
                 plane.hide()
         )

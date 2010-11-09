@@ -26,7 +26,11 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
     case GET(Path(LocalPath(path),_)) => 
       page(path)
     case POST(Params(Action("Exit",_),_)) => 
-      future { Thread.sleep(500); server.stop() }
+      future { 
+        Thread.sleep(500)
+        server.stop()
+        System.exit(0)
+      }
       ResponseString("Exited")
     case POST(Path(LocalPath(Flyable(path, flyproj)),Params(Action(name,params),_))) =>
       params match {
@@ -68,7 +72,7 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
             <textarea>{ str }</textarea>
           }
         }
-      } </div>
+      }<div id="output" /></div>
     )
   }
   def project_paths = project.subProjects.values.map { sp =>
@@ -128,11 +132,19 @@ object Buttons {
     val html = <input type="image" src={ png } name="action" value={name} />
   }
   object Compile extends Button("Compile") {
-    def apply(proj: BSP) = proj.compile.run
+    def apply(proj: BSP) = {
+      proj.log.setLevel(sbt.Level.Error)
+      val buf = new java.io.ByteArrayOutputStream
+      val std = System.out
+      System.setOut(new java.io.PrintStream(buf))
+      val error = proj.compile.run
+      System.setOut(std)
+      error map { _  => buf.toString }
+    }
   }
   object Run extends Button("Run") {
     def apply(proj: BSP) =
-      proj.compile.run orElse {
+      Compile(proj) orElse {
         future { proj.run.apply(Array()).run }
         None
       }

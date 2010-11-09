@@ -49,3 +49,11 @@ img.plane {
     position: absolute;
     display: none;
 }
+
+#output {
+    width: 100%;
+    height: 6em;
+    display: none;
+    white-space: pre;
+    overflow: auto;
+}
