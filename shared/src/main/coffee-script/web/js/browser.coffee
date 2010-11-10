@@ -1,7 +1,7 @@
 $( ->
     $("li.project a").click( ->
         # open now so we're not blocked
-        fork = window.open("", "_new")
+        fork = window.open("/loading", "_new")
         $.getJSON("#{@href}?callback=?", (res) ->
             if res isnt "fail"
                 fork.location = res
