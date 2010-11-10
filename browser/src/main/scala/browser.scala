@@ -48,3 +48,11 @@ object BrowserServer {
     }, { _ => Process.stop() })
   }
 }
+
+class BrowserLauncher extends xsbti.AppMain {
+  def run(configuration: xsbti.AppConfiguration) = {
+    BrowserServer.main(Array())
+    new Exit(0)
+  }
+  class Exit(val code: Int) extends xsbti.Exit
+}
