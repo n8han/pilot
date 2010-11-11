@@ -17,7 +17,8 @@ object Directory {
 
 class PathExtract(base: File, predicate: File => Boolean) {
   def this(predicate: File => Boolean) = this(null, predicate)
-  def unapply(path: String) = Some(new File(base, path)).filter(predicate)
+  def unapply(path: String) = Some(new File(
+    base, java.net.URLDecoder.decode(path,"utf-8"))).filter(predicate)
 }
 object FullPath extends PathExtract(Directory.dir)
 object ProjectPath extends PathExtract(Directory.project)
