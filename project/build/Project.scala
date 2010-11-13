@@ -31,5 +31,32 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
     override def ivyXML =
       <dependencies> <exclude module="commons-codec" /> </dependencies>
   }, shared)
-}
 
+  lazy val bundle = project("bundle", "Application Bundle", new DefaultProject(_) {
+    val sbt_launcher = "org.scala-tools" % "sbt-full-launcher" % "0.7.4" % 
+      "provided->default" from 
+      "http://simple-build-tool.googlecode.com/files/sbt-launch-0.7.4.jar"
+    def launchSource = descendents(("src" / "main" / "bundle") ##, "*")
+    def bundleOutput = outputPath / "Pilot.app"
+    def runScript = bundleOutput / "Pilot"
+    override def cleanAction = super.cleanAction dependsOn cleanTask(bundleOutput)
+    lazy val bundle = task {
+      import FileUtilities._
+      bundleOutput.asFile.mkdirs()
+      val launcher_jar = 
+        (configurationPath(Configurations.Provided) * "*.jar").get.toList.firstOption
+      copy(launchSource.get, bundleOutput, log).left.toOption orElse {
+        copyFlat(launcher_jar, bundleOutput, log).left.toOption
+      } orElse {
+        write(runScript.asFile, """
+#!/bin/sh
+java -jar %s @pilot.launchconfig""" format launcher_jar.get.name, log)
+      } orElse {
+        import Process._
+        Some("Unable to make executable").filter { _ =>
+          0 != ("chmod a+x " + runScript !)
+        }
+      }
+    }
+  })
+}
