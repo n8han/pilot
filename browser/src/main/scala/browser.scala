@@ -11,7 +11,7 @@ class Browser(server: Http) extends unfiltered.filter.Plan {
   import Directory._
   def intent = {
     case GET(Path("/loading",_)) => pilot.Shared.page(
-      <div class="prepend-top"><h1><em>Loading…</em></h1></div>
+      <div class="prepend-top"><h1><em>Preparing project…</em></h1></div>
     )
     case GET(Path(FullPath(path), Jsonp(wrapper, _))) =>
       val result = Process.pilot(path).getOrElse("fail")
