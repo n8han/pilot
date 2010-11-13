@@ -53,9 +53,11 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
       } orElse {
         copyFlat(launcher_jar, bundleOutput, log).left.toOption
       } orElse {
+        val name = launcher_jar.get.name
         write(runScript.asFile, """
 #!/bin/sh
-java -jar %s @pilot.launchconfig""" format launcher_jar.get.name, log)
+java -jar %s "*pilot is net.databinder pilot-processor %s"
+java -jar %s @pilot.launchconfig""" format (name, version, name), log)
       } orElse {
         import Process._
         Some("Unable to make executable").filter { _ =>
