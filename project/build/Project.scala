@@ -45,7 +45,12 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
       bundleOutput.asFile.mkdirs()
       val launcher_jar = 
         (configurationPath(Configurations.Provided) * "*.jar").get.toList.firstOption
-      copy(launchSource.get, bundleOutput, log).left.toOption orElse {
+      (launcher_jar match {
+        case Some(jar) => None
+        case None => Some("Missing launcher jar, please `update`")
+      }) orElse {
+        copy(launchSource.get, bundleOutput, log).left.toOption
+      } orElse {
         copyFlat(launcher_jar, bundleOutput, log).left.toOption
       } orElse {
         write(runScript.asFile, """
