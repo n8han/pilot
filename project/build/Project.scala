@@ -37,8 +37,9 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
       "provided->default" from 
       "http://simple-build-tool.googlecode.com/files/sbt-launch-0.7.4.jar"
     def launchSource = descendents(("src" / "main" / "bundle") ##, "*")
-    def bundleOutput = outputPath / "Pilot.app"
-    def runScript = bundleOutput / "Pilot"
+    def bundleOutput = outputPath / "Pilot.app" / "Contents"
+    def runScript = bundleOutput / "MacOS" / "pilot"
+    def infoplist = bundleOutput / "Info.plist"
     override def cleanAction = super.cleanAction dependsOn cleanTask(bundleOutput)
     lazy val bundle = task {
       import FileUtilities._
@@ -56,8 +57,32 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
         val name = launcher_jar.get.name
         write(runScript.asFile, """
 #!/bin/sh
+cd `dirname $0`
 java -jar %s "*pilot is net.databinder pilot-processor %s"
 java -jar %s @pilot.launchconfig""" format (name, version, name), log)
+      } orElse {
+        val name = launcher_jar.get.name
+        write(infoplist.asFile, """
+<plist version="1.0">
+<dict>
+<key>CFBundleExecutable</key>
+<string>pilot</string>
+<key>CFBundleIconFile</key>
+<string>Default.icns</string>
+<key>CFBundleIdentifier</key>
+<string>net.databinder.pilot</string>
+<key>CFBundleInfoDictionaryVersion</key>
+<string>6.0</string>
+<key>CFBundleName</key>
+<string>Pilot</string>
+<key>CFBundlePackageType</key>
+<string>APPL</string>
+<key>CFBundleShortVersionString</key>
+<string>%s</string>
+<key>CFBundleVersion</key>
+<string>%s</string>
+</dict>
+</plist>""" format (version, version), log)
       } orElse {
         import Process._
         Some("Unable to make executable").filter { _ =>
