@@ -35,7 +35,7 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
 
   }, shared)
 
-  lazy val bundle = project("bundle", "Application Bundle", new DefaultProject(_) {
+  lazy val bundle = project("bundle", "Pilot App Bundle", new DefaultProject(_) {
     val sbt_launcher = "org.scala-tools" % "sbt-full-launcher" % "0.7.4" % 
       "provided->default" from 
       "http://simple-build-tool.googlecode.com/files/sbt-launch-0.7.4.jar"
@@ -111,4 +111,7 @@ java -jar %s @pilot.launchconfig""" format (name, name, version, name), log)
       }
     }
   })
+  override def managedStyle = ManagedStyle.Maven
+  val publishTo = "Scala Tools Nexus" at "http://nexus.scala-tools.org/content/repositories/releases/"
+  Credentials(Path.userHome / ".ivy2" / ".credentials", log)
 }
