@@ -40,8 +40,8 @@ object BrowserServer {
   def main(args: Array[String]) {
     val server = Http.anylocal.resources(pilot.Shared.resources)
     server.filter(new Browser(server)).start()
-    val home = System.getProperty("user.home")
-    val loc = server.url + home.substring(1)
+    val start = new File("../..").getAbsolutePath
+    val loc = server.url + start.substring(1)
     unfiltered.util.Browser.open(loc) foreach { exc =>
       println("Started Pilot at " + loc)
     }
