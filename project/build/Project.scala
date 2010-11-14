@@ -24,12 +24,7 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
     override def compileOptions = super.compileOptions ++ Seq(Unchecked)
   }, shared)
   lazy val browser = project("browser", "Pilot Browser", new DefaultProject(_) {
-    lazy val dh = "net.databinder" %% "dispatch-http" % dispatch_version intransitive()
-    // manual dependencies to avoid commons-codec 1.3 since sbt-launcher uses strict dependencies
-    lazy val df = "net.databinder" %% "dispatch-futures" % dispatch_version
-    val httpclient = "org.apache.httpcomponents" % "httpclient" % "4.0.1" intransitive()
-    val httpcore = "org.apache.httpcomponents" % "httpcore" % "4.0.1" intransitive()
-    val commonslogging = "commons-logging" % "commons-logging" % "1.1.1" intransitive()
+    lazy val dh = "net.databinder" %% "dispatch-http" % dispatch_version
     val launchInterface = 
       "org.scala-tools.sbt" % "launcher-interface" % "0.7.4" % "provided"
 
