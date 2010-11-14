@@ -46,14 +46,15 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
       bundleOutput.asFile.mkdirs()
       val launcher_jar = 
         (configurationPath(Configurations.Provided) * "*.jar").get.toList.firstOption
+      val launcher_out = bundleOutput / "sbt-launcher.jar"
+      val name = launcher_out.name
       (launcher_jar match {
         case Some(jar) => None
         case None => Some("Missing launcher jar, please `update`")
       }) orElse {
         copy(launchSource.get, bundleOutput, log).left.toOption
       } orElse {
-        copyFlat(launcher_jar, bundleOutput, log).left.toOption
-        val name = launcher_jar.get.name
+        copyFile(launcher_jar.get, launcher_out, log)
         write((bundleOutput / "pilot.launchconfig").asFile, 
 """[app]
   version: %s
@@ -71,7 +72,6 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
   directory: boot
 """ format (version), log)
       } orElse {
-        val name = launcher_jar.get.name
         write(runScript.asFile, 
 """#!/bin/sh
 cd `dirname $0`/..
@@ -79,7 +79,6 @@ java -jar %s "*remove pilot"
 java -jar %s "*pilot is net.databinder pilot-processor %s"
 java -jar %s @pilot.launchconfig""" format (name, name, version, name), log)
       } orElse {
-        val name = launcher_jar.get.name
         write(infoplist.asFile, """
 <plist version="1.0">
 <dict>

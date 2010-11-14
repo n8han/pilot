@@ -6,7 +6,11 @@ object Process {
   val Serving = """.*Serving: (http://\S+).*""".r
   private var servers: List[String] = Nil
   def pilot(path: File) = {
-    val process = new ProcessBuilder("sbt", "update", "pilot").directory(path).start()
+    val launcher = new File("sbt-launcher.jar")
+    val process = new ProcessBuilder(
+      "java", "-Dsbt.log.noformat=true", "-jar", launcher.getAbsolutePath, 
+      "update", "pilot"
+    ).directory(path).start()
     /* @tailrec */ 
     def handle(reader: BufferedReader): Option[String] =
       reader.readLine() match {
