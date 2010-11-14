@@ -33,7 +33,7 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
   lazy val bundle = project("bundle", "Pilot App Bundle", new DefaultProject(_) {
     val sbt_launcher = "org.scala-tools" % "sbt-full-launcher" % "0.7.4" % 
       "provided->default" from 
-      "http://simple-build-tool.googlecode.com/files/sbt-launch-0.7.4.jar"
+      "http://databinder.net/releases/sbt-launch-0.7.4.pilot.jar"
     def launchSource = descendents(("src" / "main" / "bundle") ##, "*")
     def bundleOutput = outputPath / "Pilot.app" / "Contents"
     def runScript = bundleOutput / "MacOS" / "pilot"
