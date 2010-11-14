@@ -58,8 +58,9 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
         write(runScript.asFile, 
 """#!/bin/sh
 cd `dirname $0`/..
+java -jar %s "*remove pilot"
 java -jar %s "*pilot is net.databinder pilot-processor %s"
-java -jar %s @pilot.launchconfig""" format (name, version, name), log)
+java -jar %s @pilot.launchconfig""" format (name, name, version, name), log)
       } orElse {
         val name = launcher_jar.get.name
         write(infoplist.asFile, """
