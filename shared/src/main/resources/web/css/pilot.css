@@ -54,5 +54,6 @@ img.plane {
     width: 100%;
     height: 8em;
     display: none;
+    font-size: .75em;
     overflow: auto;
 }
