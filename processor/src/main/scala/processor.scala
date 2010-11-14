@@ -72,7 +72,7 @@ class Pilot(project: sbt.Project, server: Http) extends unfiltered.filter.Plan {
             <textarea>{ str }</textarea>
           }
         }
-      }<div id="output" /></div>
+      }<pre id="output" /></div>
     )
   }
   def project_paths = project.subProjects.values.map { sp =>

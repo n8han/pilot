@@ -52,8 +52,7 @@ img.plane {
 
 #output {
     width: 100%;
-    height: 6em;
+    height: 8em;
     display: none;
-    white-space: pre;
     overflow: auto;
 }
