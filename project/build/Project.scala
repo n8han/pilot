@@ -53,6 +53,23 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
         copy(launchSource.get, bundleOutput, log).left.toOption
       } orElse {
         copyFlat(launcher_jar, bundleOutput, log).left.toOption
+        val name = launcher_jar.get.name
+        write((bundleOutput / "pilot.launchconfig").asFile, 
+"""[app]
+  version: %s
+  org: net.databinder
+  name: pilot-browser
+  class: pilot.browser.BrowserLauncher
+[scala]
+  version: 2.7.7
+[repositories]
+  local
+  maven-local
+  scala-tools-releases
+  maven-central
+[boot]
+  directory: boot
+""" format (version), log)
       } orElse {
         val name = launcher_jar.get.name
         write(runScript.asFile, 
