@@ -19,7 +19,9 @@ How to use?
 Download the [Pilot application package][app]. On Mac OS X, it
 contains a double-clickable application. Open it and after some time a
 web browser will open with Pilot showing the current directory. There
-may be a lengthy delay as various libraries are downloaded.
+may be a lengthy delay as various libraries are downloaded. There will
+also be a dialog prompting you, awkwardly, to exit Pilot. Don't
+click OK until you want to do that!
 
 You'll notice a spde-examples folder next to the application. These
 samples from the [Spde][spde] project are provided to give you
@@ -39,7 +41,9 @@ the project to open and edit files. If there are sub-projects, you
 must be within one of these in order to run a program. When you see
 what looks like a "play" button, click it.
 
-###Hey, (fellow) Linux users!
+![Pilot screenshot](http://cloud.github.com/downloads/n8han/pilot/pilot-example.png)
+
+###Hey (fellow) Linux users!
 
 Pilot works great on a Linux. Just run the start script inside the app
 bundle, `Pilot.app/Contents/MacOS/pilot`.
