@@ -3,7 +3,7 @@ What is Pilot?
 
 Pilot is an experimental tool for writing software. It provides a web
 browser interface for finding, editing, compiling, and running source
-files. Its minimalistic interface is inspired by the Processing
+files. Its minimalistic interface is inspired by the [Processing][p5]
 development environment.
 
 [Simple Build Tool][sbt] provides Pilot's build infrastructure while
@@ -11,6 +11,7 @@ a [Unfiltered][uf] locally serves its web interface.
 
 [sbt]: http://code.google.com/p/simple-build-tool/
 [uf]: https://github.com/n8han/Unfiltered
+[p5]: http://processing.org/
 
 How to use?
 -----------
