@@ -40,5 +40,5 @@ what looks like a "play" button, click it.
 
 ###Hey, (fellow) Linux users!
 
-Pilot works just fine in Linux. Just run the start script inside the
-app bundle, `Pilot.app/Contents/MacOS/pilot`.
+Pilot works great on a Linux. Just run the start script inside the app
+bundle, `Pilot.app/Contents/MacOS/pilot`.
