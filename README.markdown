@@ -41,7 +41,7 @@ the project to open and edit files. If there are sub-projects, you
 must be within one of these in order to run a program. When you see
 what looks like a "play" button, click it.
 
-![Pilot screenshot](http://cloud.github.com/downloads/n8han/pilot/pilot-example.png)
+![Pilot screenshot](https://github.com/downloads/n8han/pilot/pilot-example.png)
 
 ###Hey (fellow) Linux users!
 
