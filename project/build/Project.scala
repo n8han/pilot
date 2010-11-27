@@ -30,7 +30,8 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
 
   }, shared)
 
-  lazy val bundle = project("bundle", "Pilot App Bundle", new DefaultProject(_) {
+  lazy val bundle = project("bundle", "Pilot App Bundle", 
+                            new DefaultProject(_) with giter8.Library {
     val sbt_launcher = "org.scala-tools" % "sbt-full-launcher" % "0.7.4" % 
       "provided->default" from 
       "http://databinder.net/releases/sbt-launch-0.7.4.pilot.jar"
@@ -38,7 +39,9 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
     def bundleOutput = outputPath / "Pilot.app" / "Contents"
     def runScript = bundleOutput / "MacOS" / "pilot"
     def infoplist = bundleOutput / "Info.plist"
+
     override def cleanAction = super.cleanAction dependsOn cleanTask(bundleOutput)
+
     lazy val bundle = task {
       import FileUtilities._
       bundleOutput.asFile.mkdirs()
@@ -50,25 +53,7 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
         case Some(jar) => None
         case None => Some("Missing launcher jar, please `update`")
       }) orElse {
-        copy(launchSource.get, bundleOutput, log).left.toOption
-      } orElse {
         copyFile(launcher_jar.get, launcher_out, log)
-        write((bundleOutput / "pilot.launchconfig").asFile, 
-"""[app]
-  version: %s
-  org: net.databinder
-  name: pilot-browser
-  class: pilot.browser.BrowserLauncher
-[scala]
-  version: 2.7.7
-[repositories]
-  local
-  maven-local
-  scala-tools-releases
-  maven-central
-[boot]
-  directory: boot
-""" format (version), log)
       } orElse {
         write(runScript.asFile, 
 """#!/bin/sh
@@ -104,7 +89,10 @@ java -jar %s @pilot.launchconfig""" format (name, name, version, name), log)
           0 != ("chmod a+x " + runScript !)
         }
       }
-    }
+    } dependsOn bundleTemplates
+    lazy val bundleTemplates =applyTemplates(launchSource, bundleOutput, Map(
+      "version" -> version
+    ))
   })
   override def managedStyle = ManagedStyle.Maven
   val publishTo = "Scala Tools Nexus" at "http://nexus.scala-tools.org/content/repositories/releases/"
