@@ -38,7 +38,6 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
     def launchSource = descendents(("src" / "main" / "bundle") ##, "*")
     def bundleOutput = outputPath / "Pilot.app" / "Contents"
     def runScript = bundleOutput / "MacOS" / "pilot"
-    def infoplist = bundleOutput / "Info.plist"
     def launcher_out = bundleOutput / "sbt-launcher.jar"
 
     override def cleanAction = super.cleanAction dependsOn cleanTask(bundleOutput)
@@ -53,28 +52,6 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
         case None => Some("Missing launcher jar, please `update`")
       }) orElse {
         copyFile(launcher_jar.get, launcher_out, log)
-      } orElse {
-        write(infoplist.asFile, """
-<plist version="1.0">
-<dict>
-<key>CFBundleExecutable</key>
-<string>pilot</string>
-<key>CFBundleIconFile</key>
-<string>Default.icns</string>
-<key>CFBundleIdentifier</key>
-<string>net.databinder.pilot</string>
-<key>CFBundleInfoDictionaryVersion</key>
-<string>6.0</string>
-<key>CFBundleName</key>
-<string>Pilot</string>
-<key>CFBundlePackageType</key>
-<string>APPL</string>
-<key>CFBundleShortVersionString</key>
-<string>%s</string>
-<key>CFBundleVersion</key>
-<string>%s</string>
-</dict>
-</plist>""" format (version, version), log)
       } orElse {
         import Process._
         Some("Unable to make executable").filter { _ =>
