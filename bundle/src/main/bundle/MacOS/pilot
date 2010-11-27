@@ -1,0 +1,5 @@
+#!/bin/sh
+cd `dirname $0`/..
+java -jar $name$ "*remove pilot"
+java -jar $name$ "*pilot is net.databinder pilot-processor $version$"
+java -jar $name$ @pilot.launchconfig

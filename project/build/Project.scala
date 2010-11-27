@@ -39,6 +39,7 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
     def bundleOutput = outputPath / "Pilot.app" / "Contents"
     def runScript = bundleOutput / "MacOS" / "pilot"
     def infoplist = bundleOutput / "Info.plist"
+    def launcher_out = bundleOutput / "sbt-launcher.jar"
 
     override def cleanAction = super.cleanAction dependsOn cleanTask(bundleOutput)
 
@@ -47,20 +48,11 @@ class Project(info: ProjectInfo) extends ParentProject(info) {
       bundleOutput.asFile.mkdirs()
       val launcher_jar = 
         (configurationPath(Configurations.Provided) * "*.jar").get.toList.firstOption
-      val launcher_out = bundleOutput / "sbt-launcher.jar"
-      val name = launcher_out.name
       (launcher_jar match {
         case Some(jar) => None
         case None => Some("Missing launcher jar, please `update`")
       }) orElse {
         copyFile(launcher_jar.get, launcher_out, log)
-      } orElse {
-        write(runScript.asFile, 
-"""#!/bin/sh
-cd `dirname $0`/..
-java -jar %s "*remove pilot"
-java -jar %s "*pilot is net.databinder pilot-processor %s"
-java -jar %s @pilot.launchconfig""" format (name, name, version, name), log)
       } orElse {
         write(infoplist.asFile, """
 <plist version="1.0">
@@ -91,7 +83,8 @@ java -jar %s @pilot.launchconfig""" format (name, name, version, name), log)
       }
     } dependsOn bundleTemplates
     lazy val bundleTemplates =applyTemplates(launchSource, bundleOutput, Map(
-      "version" -> version
+      "version" -> version,
+      "name" -> launcher_out.name
     ))
   })
   override def managedStyle = ManagedStyle.Maven
